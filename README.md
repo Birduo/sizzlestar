@@ -7,10 +7,10 @@ Make a successful shrimp family business and take over the fried rice market!
 Simply type `go run .` in the current running directory to run it!
 
 ## Roadmap
-[x] Empathize
-[x] Brainstorm
-[ ] Make main menu display
-[ ] Create save file data structure
-[ ] Ensure offline progress
-[ ] Add selection functionality
-[ ] Create socket architecture for online co-op
+- [x] Empathize
+- [x] Brainstorm
+- [ ] Make main menu display
+- [ ] Create save file data structure
+- [ ] Ensure offline progress
+- [ ] Add selection functionality
+- [ ] Create socket architecture for online co-op
