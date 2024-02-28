@@ -46,7 +46,7 @@ func (m model) View() string {
 	var out strings.Builder
 
 	// printing the color-enabled grid
-	fmt.Fprint(&out, borderStyle.Render(displayGrid(m)))
+	fmt.Fprint(&out, borderStyle.Render(displayGrid(m.grid)))
 
 	return out.String()
 }

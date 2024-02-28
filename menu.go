@@ -40,10 +40,10 @@ func wait(d time.Duration) tea.Cmd {
 }
 
 // displayGrid: this takes a rune grid and prints a color-enabled grid
-func displayGrid(m model) string {
+func displayGrid(grid [][]rune) string {
 	var out strings.Builder
 
-	for _, row := range m.grid {
+	for _, row := range grid {
 		for _, char := range row {
 			switch char {
 			case 0: // empty cell: render as nothing
