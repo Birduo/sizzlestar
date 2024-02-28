@@ -1,5 +1,5 @@
 /*
-	Purpose: Host menu functionality and structure
+	Purpose: Host menu structure and functionality
 */
 
 package main
@@ -16,13 +16,39 @@ import (
 // constants to be set in a config file later
 const (
 	fps  = 60
-	rows = 10
+	rows = 12
 	cols = 30
 )
 
 var (
+	// this style just sets a border around the given text
 	borderStyle = lipgloss.NewStyle().BorderStyle(lipgloss.NormalBorder())
+
+	// this is the grid to be drawn by the main tab
+	grid = make([][]rune, rows)
 )
+
+// defining the main model to hold core data
+type model struct {
+	tabs      map[string]tab
+	activeTab int
+}
+
+// tabs are the intermediary between the main model and upgrades
+type tab struct {
+	name      string
+	selection int // cursor selection by user
+	upgrades  []upgrade
+}
+
+// upgrades hold the core math behind this game !
+type upgrade struct {
+	description string
+	cost        float64
+	growthRate  float64
+	production  float64
+	owned       uint64
+}
 
 type frameMsg time.Time
 

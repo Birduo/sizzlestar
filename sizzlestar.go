@@ -14,11 +14,6 @@ import (
 	tea "github.com/charmbracelet/bubbletea"
 )
 
-// defining the model
-type model struct {
-	grid [][]rune
-}
-
 // waiting .25s then start animation
 func (m model) Init() tea.Cmd {
 	return tea.Sequence(wait(time.Second/4), animate())
@@ -46,17 +41,17 @@ func (m model) View() string {
 	var out strings.Builder
 
 	// printing the color-enabled grid
-	fmt.Fprint(&out, borderStyle.Render(displayGrid(m.grid)))
+	fmt.Fprint(&out, borderStyle.Render(displayGrid(grid)))
 
+	fmt.Fprint(&out, "\n\nPress q to quit\n")
 	return out.String()
 }
 
 func main() {
 	m := model{}
 	// grid init
-	m.grid = make([][]rune, rows)
-	for i := range m.grid {
-		m.grid[i] = make([]rune, cols)
+	for i := range grid {
+		grid[i] = make([]rune, cols)
 	}
 
 	if _, err := tea.NewProgram(m).Run(); err != nil {
