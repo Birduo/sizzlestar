@@ -26,11 +26,32 @@ var (
 
 	// this is the grid to be drawn by the main tab
 	grid = make([][]rune, rows)
+
+	mainTab = tab{
+		name:      "Main",
+		selection: 0,
+		upgrades: []upgrade{
+			{
+				"Hire a worker!",
+				10,
+				1.14,
+				5,
+				0,
+			},
+			{
+				"Quit",
+				0,
+				0,
+				0,
+				0,
+			},
+		},
+	}
 )
 
 // defining the main model to hold core data
 type model struct {
-	tabs      map[string]tab
+	tabs      []tab
 	activeTab int
 }
 
@@ -50,6 +71,27 @@ type upgrade struct {
 	owned       uint64
 }
 
+// select(tab, n), moves the tab selection by n amount
+func moveSelection(t *tab, n int) {
+	t.selection = min(max(0, t.selection+n), len(t.upgrades)-1)
+}
+
+// helper functions for tab selection taken from the bubbletea examples
+func max(a, b int) int {
+	if a > b {
+		return a
+	}
+	return b
+}
+
+func min(a, b int) int {
+	if a < b {
+		return a
+	}
+	return b
+}
+
+// grid animation / display functions
 type frameMsg time.Time
 
 func animate() tea.Cmd {

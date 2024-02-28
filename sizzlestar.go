@@ -25,6 +25,12 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		switch msg.String() {
 		case "ctrl+c", "q", "esc":
 			return m, tea.Quit
+		case "up":
+			moveSelection(&m.tabs[m.activeTab], -1)
+			return m, nil
+		case "down":
+			moveSelection(&m.tabs[m.activeTab], 1)
+			return m, nil
 		default:
 			return m, nil
 		}
@@ -49,6 +55,9 @@ func (m model) View() string {
 
 func main() {
 	m := model{}
+	m.activeTab = 0
+	m.tabs = []tab{mainTab}
+
 	// grid init
 	for i := range grid {
 		grid[i] = make([]rune, cols)
