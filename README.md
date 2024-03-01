@@ -9,8 +9,9 @@ Simply type `go run .` in the current running directory to run it!
 ## Roadmap
 - [x] Empathize
 - [x] Brainstorm
+- [x] Add game data JSON backend
+- [ ] Add selection functionality
 - [ ] Make main menu display
 - [ ] Create save file data structure
 - [ ] Ensure offline progress
-- [ ] Add selection functionality
 - [ ] Create socket architecture for online co-op
