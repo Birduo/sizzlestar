@@ -31,6 +31,12 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		case "down":
 			moveSelection(&m.tabs[m.activeTab], 1)
 			return m, nil
+		case "left":
+			moveTab(&m, -1)
+			return m, nil
+		case "right":
+			moveTab(&m, 1)
+			return m, nil
 		default:
 			return m, nil
 		}
@@ -49,18 +55,20 @@ func (m model) View() string {
 	// printing the color-enabled grid
 	fmt.Fprint(&out, borderStyle.Render(displayGrid(grid)))
 
-	fmt.Fprint(&out, "\n\nPress q to quit\n")
+	curTab := m.tabs[m.activeTab]
+	curSel := curTab.Upgrades[curTab.selection]
+	fmt.Fprint(&out, "\nCurrent Tab: ", curTab.Name)
+	fmt.Fprint(&out, "\nCurrent Selection: ", curSel.Description)
+	fmt.Fprint(&out, "\nPress q to quit\n")
 	return out.String()
 }
 
 func main() {
-	m := model{}
-	m.activeTab = 0
-	m.tabs = []tab{mainTab}
+	m := loadBaseModel()
 
 	// grid init
 	for i := range grid {
-		grid[i] = make([]rune, cols)
+		grid[i] = make([]rune, settings.Cols)
 	}
 
 	if _, err := tea.NewProgram(m).Run(); err != nil {

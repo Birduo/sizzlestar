@@ -13,70 +13,28 @@ import (
 	"github.com/charmbracelet/lipgloss"
 )
 
-// constants to be set in a config file later
-const (
-	fps  = 60
-	rows = 12
-	cols = 30
-)
-
 var (
+	settings = loadConfig()
+
 	// this style just sets a border around the given text
 	borderStyle = lipgloss.NewStyle().BorderStyle(lipgloss.NormalBorder())
 
 	// this is the grid to be drawn by the main tab
-	grid = make([][]rune, rows)
-
-	mainTab = tab{
-		name:      "Main",
-		selection: 0,
-		upgrades: []upgrade{
-			{
-				"Hire a worker!",
-				10,
-				1.14,
-				5,
-				0,
-			},
-			{
-				"Quit",
-				0,
-				0,
-				0,
-				0,
-			},
-		},
-	}
+	grid = make([][]rune, settings.Rows)
 )
 
-// defining the main model to hold core data
-type model struct {
-	tabs      []tab
-	activeTab int
-}
-
-// tabs are the intermediary between the main model and upgrades
-type tab struct {
-	name      string
-	selection int // cursor selection by user
-	upgrades  []upgrade
-}
-
-// upgrades hold the core math behind this game !
-type upgrade struct {
-	description string
-	cost        float64
-	growthRate  float64
-	production  float64
-	owned       uint64
-}
-
-// select(tab, n), moves the tab selection by n amount
+// moveSelection(tab, n), moves the inner-tab selection by n amount
 func moveSelection(t *tab, n int) {
-	t.selection = min(max(0, t.selection+n), len(t.upgrades)-1)
+	t.selection = min(max(0, t.selection+n), len(t.Upgrades)-1)
 }
 
-// helper functions for tab selection taken from the bubbletea examples
+// moveTab(model, n), moves the tab selection by n amount
+func moveTab(m *model, n int) {
+	// m.activeTab = min(max(0, m.activeTab+n), len(m.tabs)-1)
+	m.activeTab = min(max(0, m.activeTab+n), len(m.tabs)-1)
+}
+
+// helper functions for selections taken from the bubbletea examples
 func max(a, b int) int {
 	if a > b {
 		return a
@@ -95,7 +53,7 @@ func min(a, b int) int {
 type frameMsg time.Time
 
 func animate() tea.Cmd {
-	return tea.Tick(time.Second/fps, func(t time.Time) tea.Msg {
+	return tea.Tick(time.Second/time.Duration(settings.Fps), func(t time.Time) tea.Msg {
 		return frameMsg(t)
 	})
 }
