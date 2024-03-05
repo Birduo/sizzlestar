@@ -1,5 +1,6 @@
 {
     "name": "Main",
+    "icon": "🍚",
     "upgrades": [
         {
             "name": "Hire a worker!",

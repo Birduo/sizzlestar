@@ -92,7 +92,7 @@ func renderTabRow(m model) string {
 		}
 
 		style = style.Border(border)
-		renderedTabs = append(renderedTabs, style.Render(tab.Name))
+		renderedTabs = append(renderedTabs, style.Render(tab.Icon))
 	}
 
 	tabRow := lipgloss.JoinHorizontal(lipgloss.Top, renderedTabs...)

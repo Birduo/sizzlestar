@@ -1,5 +1,6 @@
 {
     "name": "Kitchen",
+    "icon": "🔪",
     "upgrades": [
         {
             "name": "Hire a worker!",

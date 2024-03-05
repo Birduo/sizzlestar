@@ -1,5 +1,6 @@
 {
     "name": "Settings",
+    "icon": "⚙️",
     "upgrades": [
         {
             "name": "Hire a worker!",
