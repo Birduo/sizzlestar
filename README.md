@@ -10,8 +10,10 @@ Simply type `go run .` in the current running directory to run it!
 - [x] Empathize
 - [x] Brainstorm
 - [x] Add game data JSON backend
-- [ ] Add selection functionality
-- [ ] Make main menu display
+- [x] Add selection functionality
+- [x] Add tab selection frontend
+- [ ] Add upgrade selection frontend
+- [ ] Make rice display frontend
 - [ ] Create save file data structure
 - [ ] Ensure offline progress
 - [ ] Create socket architecture for online co-op
