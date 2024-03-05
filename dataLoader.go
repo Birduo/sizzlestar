@@ -11,11 +11,6 @@ const (
 	tabDir     = "tabs/"
 )
 
-type model struct {
-	tabs      []tab
-	activeTab int
-}
-
 // tabs are the intermediary between the main model and upgrades
 type tab struct {
 	Name      string `json:"name"`

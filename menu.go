@@ -21,6 +21,14 @@ var (
 
 	// this is the grid to be drawn by the main tab
 	grid = make([][]rune, settings.Rows)
+
+	// creating inactive/active tabs
+	inactiveTabBorder = tabBorderWithBottom("┴", "─", "┴")
+	activeTabBorder   = tabBorderWithBottom("┘", " ", "└")
+	highlightColor    = lipgloss.AdaptiveColor{Light: "#874BFD", Dark: "#7D56F4"}
+	inactiveTabStyle  = lipgloss.NewStyle().Border(inactiveTabBorder, true).BorderForeground(highlightColor).Padding(0, 1)
+	activeTabStyle    = inactiveTabStyle.Copy().Border(activeTabBorder, true)
+	windowStyle       = lipgloss.NewStyle().BorderForeground(highlightColor).Padding(2, 0).Align(lipgloss.Center).Border(lipgloss.NormalBorder()).UnsetBorderTop()
 )
 
 // moveSelection(tab, n), moves the inner-tab selection by n amount
@@ -47,6 +55,49 @@ func min(a, b int) int {
 		return a
 	}
 	return b
+}
+
+// stealing tab display from https://github.com/charmbracelet/bubbletea/blob/master/examples/tabs
+// create rectangular tab border with custom edges
+func tabBorderWithBottom(left, middle, right string) lipgloss.Border {
+	border := lipgloss.RoundedBorder()
+	border.BottomLeft = left
+	border.Bottom = middle
+	border.BottomRight = right
+	return border
+}
+
+func renderTabRow(m model) string {
+	renderedTabs := []string{}
+	for i, tab := range m.tabs {
+		var style lipgloss.Style
+
+		isFirst, isLast, isActive := i == 0, i == len(m.tabs)-1, i == m.activeTab
+
+		if isActive {
+			style = activeTabStyle.Copy()
+		} else {
+			style = inactiveTabStyle.Copy()
+		}
+
+		border, _, _, _, _ := style.GetBorder()
+		if isFirst && isActive {
+			border.BottomLeft = "│"
+		} else if isFirst && !isActive {
+			border.BottomLeft = "├"
+		} else if isLast && isActive {
+			border.BottomRight = "│"
+		} else if isLast && !isActive {
+			border.BottomRight = "┤"
+		}
+
+		style = style.Border(border)
+		renderedTabs = append(renderedTabs, style.Render(tab.Name))
+	}
+
+	tabRow := lipgloss.JoinHorizontal(lipgloss.Top, renderedTabs...)
+
+	return tabRow
 }
 
 // grid animation / display functions

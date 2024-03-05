@@ -12,7 +12,13 @@ import (
 	"time"
 
 	tea "github.com/charmbracelet/bubbletea"
+	"github.com/charmbracelet/lipgloss"
 )
+
+type model struct {
+	tabs      []tab
+	activeTab int
+}
 
 // waiting .25s then start animation
 func (m model) Init() tea.Cmd {
@@ -52,13 +58,18 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 func (m model) View() string {
 	var out strings.Builder
 
-	// printing the color-enabled grid
-	fmt.Fprint(&out, borderStyle.Render(displayGrid(grid)))
+	// rendering tabs into a bar
+	tabRow := renderTabRow(m)
+	fmt.Fprint(&out, tabRow)
+	fmt.Fprint(&out, "\n")
 
 	curTab := m.tabs[m.activeTab]
 	curSel := curTab.Upgrades[curTab.selection]
-	fmt.Fprint(&out, "\nCurrent Tab: ", curTab.Name)
-	fmt.Fprint(&out, "\nCurrent Selection: ", curSel.Description)
+	fmt.Fprint(&out, windowStyle.Width((lipgloss.Width(tabRow) - windowStyle.GetHorizontalFrameSize())).Render(curSel.Description))
+
+	// printing the color-enabled grid
+	// fmt.Fprint(&out, borderStyle.Render(displayGrid(grid)))
+
 	fmt.Fprint(&out, "\nPress q to quit\n")
 	return out.String()
 }
