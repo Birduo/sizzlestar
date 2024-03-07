@@ -17,6 +17,11 @@ import (
 var (
 	settings = loadConfig()
 
+	// maxLWidth is the maximum width of descriptions within the window
+	maxRWidth = 7
+	maxLWidth = settings.Cols - maxRWidth
+	// determined to permit " $1234" for numbers
+
 	// creating inactive/active tabs
 	inactiveTabBorder = tabBorderWithBottom("┴", "─", "┴")
 	activeTabBorder   = tabBorderWithBottom("┘", " ", "└")
@@ -106,6 +111,12 @@ func renderTabRow(m model) string {
 	return tabRow
 }
 
+func renderUpgradeRow(left string, right string, style lipgloss.Style) string {
+	leftSide := style.Copy().Width(maxLWidth).Render(left)
+	rightSide := style.Copy().Align(lipgloss.Right).Width(maxRWidth).Render(right)
+	return lipgloss.JoinHorizontal(lipgloss.Top, leftSide, rightSide)
+}
+
 func renderTabContent(m model) string {
 	var out strings.Builder
 
@@ -120,12 +131,12 @@ func renderTabContent(m model) string {
 			style = unselectedItemStyle.Copy()
 		}
 
-		fmt.Fprint(&out, style.Align(lipgloss.Left).Render(curTab.Upgrades[i].Description))
-		fmt.Fprint(&out, style.Align(lipgloss.Right).Render(fmt.Sprintf("\tx%d", curTab.Upgrades[i].owned)))
-		fmt.Fprint(&out, "\n")
-		fmt.Fprint(&out, style.Align(lipgloss.Left).Render(fmt.Sprintf("Cost: %.3f", curTab.Upgrades[i].Cost)))
-		fmt.Fprint(&out, style.Align(lipgloss.Right).Render(fmt.Sprintf("\t%.3f¥/s", curTab.Upgrades[i].Production)))
-		fmt.Fprint(&out, "\n")
+		description := curTab.Upgrades[i].Description
+		owned := fmt.Sprintf("x%d", curTab.Upgrades[i].owned)
+		fmt.Fprint(&out, renderUpgradeRow(description, owned, style)+"\n")
+		cost := fmt.Sprintf("Cost: %.2f", curTab.Upgrades[i].Cost)
+		production := fmt.Sprintf("%.2f¥/s", curTab.Upgrades[i].Production)
+		fmt.Fprint(&out, renderUpgradeRow(cost, production, style)+"\n")
 	}
 
 	return out.String()

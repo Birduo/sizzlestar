@@ -12,8 +12,9 @@ Simply type `go run .` in the current running directory to run it!
 - [x] Add game data JSON backend
 - [x] Add selection functionality
 - [x] Add tab selection frontend
-- [ ] Add upgrade selection frontend
-- [ ] Make rice display frontend
+- [x] Add upgrade selection frontend
 - [ ] Create save file data structure
-- [ ] Ensure offline progress
+- [ ] Add calculation backend
+- [ ] Add upgrade selection backend
+- [ ] Make rice display frontend
 - [ ] Create socket architecture for online co-op

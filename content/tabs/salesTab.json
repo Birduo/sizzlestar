@@ -3,16 +3,16 @@
     "icon": "💴",
     "upgrades": [
         {
-            "name": "Hire a worker!",
+            "name": "Serving Belt Speed",
             "cost": 10,
             "growthRate": 1.14,
             "production": 5
         },
         {
-            "name": "Quit",
-            "cost": 0,
-            "growthRate": 0,
-            "production": 0
+            "name": "More Tables",
+            "cost": 1000,
+            "growthRate": 1.14,
+            "production": 500
         }
     ]
 }

@@ -63,9 +63,6 @@ func (m model) View() string {
 	fmt.Fprint(&out, tabRow)
 	fmt.Fprint(&out, "\n")
 
-	// curSel := m.tabs[m.activeTab].Upgrades[m.tabs[m.activeTab].selection]
-	// fmt.Fprint(&out, windowStyle.Width((lipgloss.Width(tabRow) - windowStyle.GetHorizontalFrameSize())).Render(curSel.Description))
-
 	fmt.Fprint(&out, windowStyle.Render(renderTabContent(m)))
 	// fmt.Fprint(&out, renderTabContent(m))
 
