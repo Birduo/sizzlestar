@@ -30,9 +30,9 @@ type upgrade struct {
 
 // base settings (fps/grid dims)
 type config struct {
-	Fps  uint16 `json:"fps"`
-	Rows uint16 `json:"rows"`
-	Cols uint16 `json:"cols"`
+	Fps  int `json:"fps"`
+	Rows int `json:"rows"`
+	Cols int `json:"cols"`
 }
 
 // loads tabs from ./resources/tabs/

@@ -1,5 +1,5 @@
 # Sizzle Star
-A simple command line idle game written in Go using Bubbletea!
+A simple command line idle game written in Go using [Bubbletea](https://github.com/charmbracelet/bubbletea)!
 
 Make a successful shrimp family business and take over the fried rice market!
 

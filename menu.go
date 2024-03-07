@@ -9,6 +9,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/charmbracelet/bubbles/list"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
 )
@@ -16,30 +17,35 @@ import (
 var (
 	settings = loadConfig()
 
-	// this style just sets a border around the given text
-	borderStyle = lipgloss.NewStyle().BorderStyle(lipgloss.NormalBorder())
-
-	// this is the grid to be drawn by the main tab
-	grid = make([][]rune, settings.Rows)
-
 	// creating inactive/active tabs
 	inactiveTabBorder = tabBorderWithBottom("┴", "─", "┴")
 	activeTabBorder   = tabBorderWithBottom("┘", " ", "└")
-	highlightColor    = lipgloss.AdaptiveColor{Light: "#874BFD", Dark: "#7D56F4"}
-	inactiveTabStyle  = lipgloss.NewStyle().Border(inactiveTabBorder, true).BorderForeground(highlightColor).Padding(0, 1)
-	activeTabStyle    = inactiveTabStyle.Copy().Border(activeTabBorder, true)
-	windowStyle       = lipgloss.NewStyle().BorderForeground(highlightColor).Padding(2, 0).Align(lipgloss.Center).Border(lipgloss.NormalBorder()).UnsetBorderTop()
+	highlightColor    = lipgloss.AdaptiveColor{Light: "#194D33", Dark: "#2D8659"}
+	inactiveTabStyle  = lipgloss.NewStyle().
+				Border(inactiveTabBorder, true).
+				BorderForeground(highlightColor).
+				Padding(0, 1)
+	activeTabStyle = inactiveTabStyle.Copy().Border(activeTabBorder, true)
+	windowStyle    = lipgloss.NewStyle().
+			BorderForeground(highlightColor).
+			Width(settings.Cols).
+			Height(settings.Rows).
+			Border(lipgloss.NormalBorder()).
+			UnsetBorderTop()
+	helpStyle           = list.DefaultStyles().HelpStyle.PaddingLeft(4).PaddingBottom(1).Faint(true)
+	selectedItemStyle   = lipgloss.NewStyle().Foreground(highlightColor)
+	unselectedItemStyle = lipgloss.NewStyle().Faint(true)
 )
-
-// moveSelection(tab, n), moves the inner-tab selection by n amount
-func moveSelection(t *tab, n int) {
-	t.selection = min(max(0, t.selection+n), len(t.Upgrades)-1)
-}
 
 // moveTab(model, n), moves the tab selection by n amount
 func moveTab(m *model, n int) {
 	// m.activeTab = min(max(0, m.activeTab+n), len(m.tabs)-1)
 	m.activeTab = min(max(0, m.activeTab+n), len(m.tabs)-1)
+}
+
+// moveSelection(tab, n), moves the selection within a tab by n amount
+func moveSelection(t *tab, n int) {
+	t.selection = min(max(0, t.selection+n), len(t.Upgrades)-1)
 }
 
 // helper functions for selections taken from the bubbletea examples
@@ -100,6 +106,31 @@ func renderTabRow(m model) string {
 	return tabRow
 }
 
+func renderTabContent(m model) string {
+	var out strings.Builder
+
+	curTab := m.tabs[m.activeTab]
+	// fmt.Fprint(&out, curSel, "\n")
+	// to render per upgrade: description, cost, prod, owned
+	for i := max(curTab.selection-1, 0); i < len(curTab.Upgrades) && 3*i < settings.Rows; i++ {
+		var style lipgloss.Style
+		if i == curTab.selection {
+			style = selectedItemStyle.Copy()
+		} else {
+			style = unselectedItemStyle.Copy()
+		}
+
+		fmt.Fprint(&out, style.Align(lipgloss.Left).Render(curTab.Upgrades[i].Description))
+		fmt.Fprint(&out, style.Align(lipgloss.Right).Render(fmt.Sprintf("\tx%d", curTab.Upgrades[i].owned)))
+		fmt.Fprint(&out, "\n")
+		fmt.Fprint(&out, style.Align(lipgloss.Left).Render(fmt.Sprintf("Cost: %.3f", curTab.Upgrades[i].Cost)))
+		fmt.Fprint(&out, style.Align(lipgloss.Right).Render(fmt.Sprintf("\t%.3f¥/s", curTab.Upgrades[i].Production)))
+		fmt.Fprint(&out, "\n")
+	}
+
+	return out.String()
+}
+
 // grid animation / display functions
 type frameMsg time.Time
 
@@ -114,31 +145,4 @@ func wait(d time.Duration) tea.Cmd {
 		time.Sleep(d)
 		return nil
 	}
-}
-
-// displayGrid: this takes a rune grid and prints a color-enabled grid
-func displayGrid(grid [][]rune) string {
-	var out strings.Builder
-
-	for _, row := range grid {
-		for _, char := range row {
-			switch char {
-			case 0: // empty cell: render as nothing
-				fmt.Fprint(&out, " ")
-			default: // render as the given rgb of the last slice of the i32
-				hexColor := fmt.Sprintf("#%06X", char)
-
-				// cool debug hex tracker
-				// fmt.Fprint(&out, hexColor)
-
-				randStyle := lipgloss.NewStyle().
-					Background(lipgloss.Color(hexColor))
-
-				fmt.Fprint(&out, randStyle.Render(" "))
-			}
-		}
-		fmt.Fprint(&out, "\n")
-	}
-
-	return out.String()
 }

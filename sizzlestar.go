@@ -12,7 +12,6 @@ import (
 	"time"
 
 	tea "github.com/charmbracelet/bubbletea"
-	"github.com/charmbracelet/lipgloss"
 )
 
 type model struct {
@@ -49,6 +48,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 	case frameMsg:
 		return m, animate()
+
 	default:
 		return m, nil
 	}
@@ -63,24 +63,18 @@ func (m model) View() string {
 	fmt.Fprint(&out, tabRow)
 	fmt.Fprint(&out, "\n")
 
-	curTab := m.tabs[m.activeTab]
-	curSel := curTab.Upgrades[curTab.selection]
-	fmt.Fprint(&out, windowStyle.Width((lipgloss.Width(tabRow) - windowStyle.GetHorizontalFrameSize())).Render(curSel.Description))
+	// curSel := m.tabs[m.activeTab].Upgrades[m.tabs[m.activeTab].selection]
+	// fmt.Fprint(&out, windowStyle.Width((lipgloss.Width(tabRow) - windowStyle.GetHorizontalFrameSize())).Render(curSel.Description))
 
-	// printing the color-enabled grid
-	// fmt.Fprint(&out, borderStyle.Render(displayGrid(grid)))
+	fmt.Fprint(&out, windowStyle.Render(renderTabContent(m)))
+	// fmt.Fprint(&out, renderTabContent(m))
 
-	fmt.Fprint(&out, "\nPress q to quit\n")
+	fmt.Fprint(&out, helpStyle.Render("Press q to quit"))
 	return out.String()
 }
 
 func main() {
 	m := loadBaseModel()
-
-	// grid init
-	for i := range grid {
-		grid[i] = make([]rune, settings.Cols)
-	}
 
 	if _, err := tea.NewProgram(m).Run(); err != nil {
 		fmt.Println("Error running program:", err)
