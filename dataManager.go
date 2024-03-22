@@ -110,7 +110,7 @@ func (m *model) saveGameState() {
 }
 
 func (m *model) loadGameState() {
-	if _, err := os.Stat(contentDir + "save.zsz"); err == nil {
+	if _, err := os.Stat(contentDir + "save.szs"); err == nil {
 		content, readErr := os.ReadFile(contentDir + "save.szs")
 		if readErr != nil {
 			log.Fatal(err)
@@ -121,7 +121,7 @@ func (m *model) loadGameState() {
 			log.Fatal(err)
 		}
 	} else if errors.Is(err, os.ErrNotExist) {
-		// file doens't exist, make a new gameState
+		// file doesn't exist, make a new gameState
 		m.initGameState()
 	} else {
 		log.Fatal(err)

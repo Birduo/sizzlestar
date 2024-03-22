@@ -32,6 +32,8 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		case "ctrl+c", "q", "esc":
 			m.saveGameState()
 			return m, tea.Quit
+		case " ", "enter": // spacebar or enter
+			return m, selectItem(&m)
 		case "up":
 			moveSelection(&m.tabs[m.activeTab], -1)
 			return m, nil
@@ -66,7 +68,6 @@ func (m model) View() string {
 	fmt.Fprint(&out, "\n")
 
 	fmt.Fprint(&out, windowStyle.Render(renderTabContent(m)))
-	// fmt.Fprint(&out, renderTabContent(m))
 
 	fmt.Fprint(&out, helpStyle.Render("Press q to quit"))
 	return out.String()

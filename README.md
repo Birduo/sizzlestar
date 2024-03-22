@@ -13,8 +13,10 @@ Simply type `go run .` in the current running directory to run it!
 - [x] Add selection functionality
 - [x] Add tab selection frontend
 - [x] Add upgrade selection frontend
-- [ ] Create save file data structure
+- [x] Create save file data structure
+- [x] Create concise data representation
+- [x] Add save/load functionality
+- [x] Add upgrade selection backend
 - [ ] Add calculation backend
-- [ ] Add upgrade selection backend
 - [ ] Make rice display frontend
 - [ ] Create socket architecture for online co-op

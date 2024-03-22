@@ -6,6 +6,7 @@ package main
 
 import (
 	"fmt"
+	"math"
 	"strings"
 	"time"
 
@@ -41,6 +42,22 @@ var (
 	selectedItemStyle   = lipgloss.NewStyle().Foreground(highlightColor)
 	unselectedItemStyle = lipgloss.NewStyle().Faint(true)
 )
+
+func selectItem(m *model) tea.Cmd {
+	curSel := m.tabs[m.activeTab].selection
+	if m.tabs[m.activeTab].Upgrades[curSel].Description == "Quit" {
+		m.saveGameState()
+		return tea.Quit
+	}
+
+	// check price and purchase
+	if m.tabs[m.activeTab].Upgrades[curSel].Cost <= m.state.yen {
+		m.state.yen -= m.tabs[m.activeTab].Upgrades[curSel].Cost
+		m.tabs[m.activeTab].Upgrades[curSel].owned++
+	}
+
+	return nil
+}
 
 // moveTab(model, n), moves the tab selection by n amount
 func moveTab(m *model, n int) {
@@ -117,13 +134,41 @@ func renderUpgradeRow(left string, right string, style lipgloss.Style) string {
 	return lipgloss.JoinHorizontal(lipgloss.Top, leftSide, rightSide)
 }
 
+// take number and shorten to length chars in scientific notation
+func simplifyNumber(n float64, length int) string {
+	currentNum := fmt.Sprintf("%.1f", n)
+	if len(currentNum) <= length {
+		return currentNum
+	}
+
+	exp := int(math.Log10(n))
+	expStr := fmt.Sprintf("e%d", exp)
+
+	base := n / math.Pow(10, float64(exp))
+	baseStr := fmt.Sprintf("%.*f", length-len(expStr)-2, base)
+	if length-len(expStr) < 3 {
+		baseStr = fmt.Sprintf("%.0f", base)
+	}
+
+	return fmt.Sprintf("%s%s", baseStr, expStr)
+}
+
+func renderState(s gameState) string {
+	var out strings.Builder
+
+	fmt.Fprint(&out, "¥", simplifyNumber(s.yen, 5))
+
+	return out.String()
+}
+
 func renderTabContent(m model) string {
 	var out strings.Builder
+	curRows := 0
 
 	curTab := m.tabs[m.activeTab]
 	// fmt.Fprint(&out, curSel, "\n")
 	// to render per upgrade: description, cost, prod, owned
-	for i := max(curTab.selection-1, 0); i < len(curTab.Upgrades) && 3*i < settings.Rows; i++ {
+	for i := max(curTab.selection-1, 0); i < len(curTab.Upgrades) && 3*i < settings.Rows-1; i++ {
 		var style lipgloss.Style
 		if i == curTab.selection {
 			style = selectedItemStyle.Copy()
@@ -133,11 +178,21 @@ func renderTabContent(m model) string {
 
 		description := curTab.Upgrades[i].Description
 		owned := fmt.Sprintf("x%d", curTab.Upgrades[i].owned)
-		fmt.Fprint(&out, renderUpgradeRow(description, owned, style)+"\n")
+		fmt.Fprintln(&out, renderUpgradeRow(description, owned, style))
 		cost := fmt.Sprintf("Cost: %.2f", curTab.Upgrades[i].Cost)
 		production := fmt.Sprintf("%.2f¥/s", curTab.Upgrades[i].Production)
-		fmt.Fprint(&out, renderUpgradeRow(cost, production, style)+"\n")
+		fmt.Fprintln(&out, renderUpgradeRow(cost, production, style))
+
+		curRows = 3 * i
 	}
+
+	// fill in whitespace beneath until state is just above the bottom
+	for i := curRows; i < settings.Rows; i++ {
+		fmt.Fprintln(&out)
+		curRows++
+	}
+
+	fmt.Fprint(&out, renderState(m.state))
 
 	return out.String()
 }
